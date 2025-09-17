@@ -1,14 +1,17 @@
 package com.libraryManagement.project.service;
 
+import com.libraryManagement.project.dto.requestDTO.CartItemRequestDTO;
+import com.libraryManagement.project.dto.responseDTO.CartResponseDTO;
+
 public interface CartService {
 
-    Object getCart(Long userId);
+    CartResponseDTO getCart(Long userId);
 
-    Object addToCart(Long userId, Long bookId, int quantity);
+    CartResponseDTO addToCart(Long userId, CartItemRequestDTO requestDTO);
 
-    Object updateCartItem(Long userId, Long bookId, Integer quantity);
+    CartResponseDTO updateCartItem(Long userId, Long bookId, Integer quantity);
 
-    void removeCartItem(Long userId, Long bookId);
+    CartResponseDTO removeCartItem(Long userId, Long bookId);
 
-    void clearCart(Long userId);
+    CartResponseDTO clearCart(Long userId);
 }
