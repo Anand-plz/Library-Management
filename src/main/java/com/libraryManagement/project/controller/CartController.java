@@ -1,10 +1,11 @@
 package com.libraryManagement.project.controller;
 
+import com.libraryManagement.project.dto.requestDTO.CartItemRequestDTO;
+import com.libraryManagement.project.dto.responseDTO.CartResponseDTO;
 import com.libraryManagement.project.service.CartService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/cart")
@@ -17,32 +18,35 @@ public class CartController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<Object> getCart(@PathVariable Long userId) {
-        Object cart = cartService.getCart(userId);
-        return ResponseEntity.ok(cart);
+    public ResponseEntity<CartResponseDTO> getCart(@PathVariable Long userId) {
+        return ResponseEntity.ok(cartService.getCart(userId));
     }
 
-    @PostMapping("/{userId}/items/add/{bookId}")
-    public ResponseEntity<Object> addToCart(@PathVariable Long userId, @PathVariable Long bookId, @RequestParam(defaultValue = "1") int quantity) {
-        Object updatedCart = cartService.addToCart(userId, bookId, quantity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(updatedCart);
+    @PostMapping("/{userId}/items")
+    public ResponseEntity<CartResponseDTO> addToCart(
+            @PathVariable Long userId,
+            @RequestBody CartItemRequestDTO requestDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(cartService.addToCart(userId, requestDTO));
     }
 
-    @PutMapping("/{userId}/items/update/{bookId}")
-    public ResponseEntity<Object> updateCartItem(@PathVariable Long userId, @PathVariable Long bookId, @RequestParam Integer quantity) {
-        Object updatedCart = cartService.updateCartItem(userId, bookId, quantity);
-        return ResponseEntity.ok(updatedCart);
+    @PutMapping("/{userId}/items/{bookId}")
+    public ResponseEntity<CartResponseDTO> updateCartItem(
+            @PathVariable Long userId,
+            @PathVariable Long bookId,
+            @RequestBody CartItemRequestDTO requestDTO) {
+        return ResponseEntity.ok(cartService.updateCartItem(userId, bookId, requestDTO.getQuantity()));
     }
 
-    @DeleteMapping("/{userId}/items/delete/{bookId}")
-    public ResponseEntity<String> removeCartItem(@PathVariable Long userId, @PathVariable Long bookId) {
-        cartService.removeCartItem(userId, bookId);
-        return ResponseEntity.ok("Item removed from cart successfully.");
+    @DeleteMapping("/{userId}/items/{bookId}")
+    public ResponseEntity<CartResponseDTO> removeCartItem(
+            @PathVariable Long userId,
+            @PathVariable Long bookId) {
+        return ResponseEntity.ok(cartService.removeCartItem(userId, bookId));
     }
 
-    @DeleteMapping("/{userId}/items/clear")
-    public ResponseEntity<Map<String, String>> clearCart(@PathVariable Long userId) {
-        cartService.clearCart(userId);
-        return ResponseEntity.ok(Map.of("message", "Cart cleared successfully."));
+    @DeleteMapping("/{userId}/clear")
+    public ResponseEntity<CartResponseDTO> clearCart(@PathVariable Long userId) {
+        return ResponseEntity.ok(cartService.clearCart(userId));
     }
 }
